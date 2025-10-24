@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Project} from '../project';
 import {FormsModule} from '@angular/forms';
+import {ProjectStatus} from '../project-status';
 
 @Component({
   selector: 'app-project-modal',
@@ -11,7 +12,6 @@ import {FormsModule} from '@angular/forms';
 })
 export class ProjectModal {
 
-
   // Receive project
   @Input() project: Project | null = null;
 
@@ -21,10 +21,10 @@ export class ProjectModal {
   // Existing project
   formData: Project = {
     id: 0,
-    title: '',
+    name: '',
     description: '',
-    status: true,
-    person: ''
+    status: ProjectStatus.PENDING,
+    responsiblePerson: ''
   };
 
 
@@ -37,7 +37,7 @@ export class ProjectModal {
     if (this.project) {
       this.formData = {...this.project};
     } else {
-      this.formData = {id: 0, title: '', description: '', status: true, person: ''};
+      this.formData = {id: 0, name: '', description: '', status: ProjectStatus.PENDING, responsiblePerson: ''};
     }
   }
 
