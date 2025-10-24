@@ -1,10 +1,3 @@
-<app-project-header (addClicked)="handleAddClick()"/>
-<app-project-filter [totalProjects]="totalProjects" [trueProjects]="trueProjects" [falseProjects]="falseProjects"/>
-<app-project-list [projects]="projects" (editClicked)="handleEditClick($event)"/>
-<app-project-modal
-  [isModalOpen]="isModalOpen"
-  [project]="selectedProject"
-  (close)="closeModal()"
-  (save)="saveProject($event)"
-  (delete)="handleDelete($event)"
-/>
+<app-project-header/>
+<app-project-filter/>
+<app-project-list/>

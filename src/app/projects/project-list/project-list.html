@@ -1,7 +1,17 @@
-<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-  @for (project of projects; track project.id) {
+<h2 class="text-2xl mt-6 mb-2 font-bold">Projects</h2>
+
+@if (loading()) {
+  <p class="text-blue-400">Loading...</p>
+}
+
+<ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  @for (project of projects(); track project.id) {
     <li>
-      <app-project-card [project]="project" (editClicked)="editClicked.emit($event)"/>
+      <app-project-card [project]="project"/>
     </li>
+  } @empty {
+    @if (!loading()) {
+      <p>No projects found.</p>
+    }
   }
 </ul>
