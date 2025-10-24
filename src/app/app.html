@@ -1,3 +1,9 @@
-<app-project-header/>
+<app-project-header (addClicked)="onAddProjectClicked()"/>
 <app-project-filter/>
 <app-project-list/>
+<app-project-modal
+  [isModalOpen]="isModalOpen()"
+  [project]="selectedProject()"
+  (closeModal)="onModalClose()"
+  (projectSubmit)="onProjectSave($event)"
+/>

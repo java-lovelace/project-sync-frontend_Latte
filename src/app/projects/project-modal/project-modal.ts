@@ -1,9 +1,11 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Project} from '../project';
 import {FormsModule} from '@angular/forms';
+import {ProjectStatus} from '../project-status';
 
 @Component({
   selector: 'app-project-modal',
+  standalone: true,
   imports: [
     FormsModule
   ],
@@ -11,39 +13,41 @@ import {FormsModule} from '@angular/forms';
 })
 export class ProjectModal {
 
-
   // Receive project
   @Input() project: Project | null = null;
 
   // Receive ModalOpen, false by default
   @Input() isModalOpen = false;
 
+  // Project statuses
+  projectStatuses = Object.values(ProjectStatus);
+
   // Existing project
   formData: Project = {
     id: 0,
-    title: '',
+    name: '',
     description: '',
-    status: true,
-    person: ''
+    status: ProjectStatus.PENDING,
+    responsiblePerson: ''
   };
 
-
   // Emit events
-  @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<Project>();
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() projectSubmit = new EventEmitter<Project>();
   @Output() delete = new EventEmitter<number>();
 
+  // On changes
   ngOnChanges() {
     if (this.project) {
       this.formData = {...this.project};
     } else {
-      this.formData = {id: 0, title: '', description: '', status: true, person: ''};
+      this.formData = {id: 0, name: '', description: '', status: ProjectStatus.PENDING, responsiblePerson: ''};
     }
   }
 
   // Emit submit project
-  onSubmit() {
-    this.save.emit(this.formData);
+  onSubmit(project: Project) {
+    this.projectSubmit.emit(project);
   }
 
 }

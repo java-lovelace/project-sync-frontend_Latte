@@ -13,5 +13,33 @@ import {ProjectModal} from "./projects/project-modal/project-modal";
   styleUrl: './app.css'
 })
 export class App {
+  isModalOpen = signal<boolean>(false);
+  selectedProject = signal<Project | null>(null);
 
+  constructor(private projectService: ProjectService) {}
+
+  onAddProjectClicked(): void {
+    this.selectedProject.set(null);
+    this.isModalOpen.set(true);
+  }
+
+  onEditProjectClicked(project: Project): void {
+    this.selectedProject.set(project);
+    this.isModalOpen.set(true);
+  }
+
+  onProjectSave(project: Project): void {
+    if (project.id) {
+      this.projectService.updateProject(project);
+    } else {
+      this.projectService.createProject(project);
+    }
+    this.isModalOpen.set(false);
+    this.selectedProject.set(null);
+  }
+
+  onModalClose(): void {
+    this.isModalOpen.set(false);
+    this.selectedProject.set(null);
+  }
 }
