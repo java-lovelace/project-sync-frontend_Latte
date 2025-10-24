@@ -19,7 +19,7 @@ export class ProjectService {
   private _success = signal<string | null>(null);
   private _totalProjects: Signal<number> = computed(() => this._projects().length);
   private _pendingProjects: Signal<number> = computed(() => this._projects().filter(project => project.status === ProjectStatus.PENDING).length)
-  private _activeProjects: Signal<number> = computed(()=> this._projects().filter(project => project.status === ProjectStatus.ACTIVE).length)
+  private _activeProjects: Signal<number> = computed(() => this._projects().filter(project => project.status === ProjectStatus.ACTIVE).length)
   private _cancelledProjects: Signal<number> = computed(() => this._projects().filter(project => project.status === ProjectStatus.CANCELLED).length)
   private _finishedProjects: Signal<number> = computed(() => this._projects().filter(project => project.status === ProjectStatus.FINISHED).length)
 
@@ -73,6 +73,24 @@ export class ProjectService {
         }),
         finalize(() => {
           this._loading.set(false);
+        }),
+      )
+      .subscribe();
+  }
+
+  // Method to create project and send it to the API
+  createProject(project: Project): void {
+    this.http
+      .post<Project>(`${this.apiUrl}/api/projects`, project)
+      .pipe(
+        tap((newProject) => {
+          this._projects.update((currentProjects) => [...currentProjects, newProject]);
+          this._success.set('Project created successfully.');
+        }),
+        catchError((err) => {
+          console.error(err);
+          this._error.set('Failed to create project.');
+          return of(null);
         }),
       )
       .subscribe();

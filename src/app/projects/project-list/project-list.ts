@@ -8,7 +8,6 @@ import {ProjectModal} from '../project-modal/project-modal';
   selector: 'app-project-list',
   imports: [
     ProjectCard,
-    ProjectModal
   ],
   templateUrl: './project-list.html'
 })

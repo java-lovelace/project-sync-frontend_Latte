@@ -13,5 +13,20 @@ import {ProjectModal} from "./projects/project-modal/project-modal";
   styleUrl: './app.css'
 })
 export class App {
+  isModalOpen = signal<boolean>(false);
 
+  constructor(private projectService: ProjectService) {}
+
+  onAddProjectClicked(): void {
+    this.isModalOpen.set(true);
+  }
+
+  onProjectSave(project: Project): void {
+    this.projectService.createProject(project);
+    this.isModalOpen.set(false);
+  }
+
+  onModalClose(): void {
+    this.isModalOpen.set(false);
+  }
 }
