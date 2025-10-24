@@ -1,10 +1,12 @@
+import {ProjectStatus} from './project-status';
+
 export interface Project {
 
   // Project fields template (placeholder)
   id: number;
-  title: string;
+  name: string;
+  status: ProjectStatus;
   description: string;
-  status: boolean;
-  person: string;
+  responsiblePerson: string;
 
 }
