@@ -1,4 +1,4 @@
-import {Component, effect, inject, signal} from '@angular/core';
+import {Component, effect, inject, signal, OnInit} from '@angular/core';
 import {ProjectCard} from '../project-card/project-card';
 import {Project} from '../project';
 import {ProjectService} from '../project-service';
@@ -13,7 +13,7 @@ import {ProjectModal} from '../project-modal/project-modal';
   ],
   templateUrl: './project-list.html'
 })
-export class ProjectList {
+export class ProjectList implements OnInit {
 
   // Inject the service
   private projectService = inject(ProjectService);
