@@ -1,8 +1,7 @@
-import {computed, Injectable, Signal, signal, WritableSignal} from '@angular/core';
+import {computed, Injectable, Signal, signal} from '@angular/core';
 import {Project} from './project';
 import {HttpClient} from '@angular/common/http';
 import {catchError, finalize, of, tap} from 'rxjs';
-import {ProjectStatus} from "./project-status";
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +17,6 @@ export class ProjectService {
   private _error = signal<string | null>(null);
   private _success = signal<string | null>(null);
   private _totalProjects: Signal<number> = computed(() => this._projects().length);
-  private _pendingProjects: Signal<number> = computed(() => this._projects().filter(project => project.status === ProjectStatus.PENDING).length)
-  private _activeProjects: Signal<number> = computed(() => this._projects().filter(project => project.status === ProjectStatus.ACTIVE).length)
-  private _cancelledProjects: Signal<number> = computed(() => this._projects().filter(project => project.status === ProjectStatus.CANCELLED).length)
-  private _finishedProjects: Signal<number> = computed(() => this._projects().filter(project => project.status === ProjectStatus.FINISHED).length)
-
 
   // Getters for each signal as readonly
   public projects = this._projects.asReadonly();
@@ -34,21 +28,6 @@ export class ProjectService {
     return this._totalProjects;
   }
 
-  get pendingProjects(): Signal<number> {
-    return this._pendingProjects;
-  }
-
-  get activeProjects(): Signal<number> {
-    return this._activeProjects;
-  }
-
-  get cancelledProjects(): Signal<number> {
-    return this._cancelledProjects;
-  }
-
-  get finishedProjects(): Signal<number> {
-    return this._finishedProjects;
-  }
 
 // Constructor to inject HttpClient
   constructor(private http: HttpClient) {
@@ -67,7 +46,8 @@ export class ProjectService {
           this._projects.set(data);
         }),
         catchError((err) => {
-          this._error.set('Failed to load projects.');
+          console.log(err)
+          this._error.set('Failed to load projects');
           this._projects.set([]);
           return of(null);
         }),
@@ -80,6 +60,10 @@ export class ProjectService {
 
   // Method to create project and send it to the API
   createProject(project: Project): void {
+    this._loading.set(true);
+    this._error.set(null);
+    this._success.set(null);
+
     this.http
       .post<Project>(`${this.apiUrl}/api/projects`, project)
       .pipe(
@@ -92,6 +76,61 @@ export class ProjectService {
           this._error.set('Failed to create project.');
           return of(null);
         }),
+        finalize(() => {
+          this._loading.set(false);
+        }),
+      )
+      .subscribe();
+  }
+
+  // Method to update project and send it to the API
+  updateProject(project: Project): void {
+    this._loading.set(true);
+    this._error.set(null);
+    this._success.set(null);
+
+    this.http
+      .put<Project>(`${this.apiUrl}/api/projects/${project.id}`, project)
+      .pipe(
+        tap((updatedProject) => {
+          this._projects.update((currentProjects) =>
+            currentProjects.map((p) => (p.id === updatedProject.id ? updatedProject : p))
+          );
+          this._success.set('Project updated successfully.');
+        }),
+        catchError((err) => {
+          console.error(err);
+          this._error.set('Failed to update project.');
+          return of(null);
+        }),
+        finalize(() => {
+          this._loading.set(false);
+        }),
+      )
+      .subscribe();
+  }
+
+  // Method to delete a project
+  deleteProject(id: number): void {
+    this._loading.set(true);
+    this._error.set(null);
+    this._success.set(null);
+
+    this.http
+      .delete<void>(`${this.apiUrl}/api/projects/delete/${id}`)
+      .pipe(
+        tap(() => {
+          this._projects.update((currentProjects) => currentProjects.filter(p => p.id !== id));
+          this._success.set('Project deleted successfully.');
+        }),
+        catchError((err) => {
+          console.error(err);
+          this._error.set('Failed to delete project.');
+          return of(null);
+        }),
+        finalize(() => {
+          this._loading.set(false);
+        })
       )
       .subscribe();
   }

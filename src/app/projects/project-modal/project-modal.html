@@ -1,7 +1,7 @@
 @if (isModalOpen) {
   <div
     class="fixed inset-0 bg-black/60 flex items-center justify-center"
-    (click)="close.emit()"
+    (click)="closeModal.emit()"
   >
     <div
       class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md"
@@ -11,8 +11,9 @@
         <h2 class="text-xl font-semibold">{{ project ? "Edit Project" : "Add New Project" }}</h2>
         @if (project) {
           <button
-            (click)="delete.emit(formData.id) ;close.emit()"
+            (click)="delete.emit(formData.id)"
             class="hover:bg-gray-200 transition-all rounded cursor-pointer p-2">
+            <!--suppress HtmlDeprecatedAttribute -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                  stroke="currentColor" class="size-6">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -23,7 +24,7 @@
       </div>
 
       <form
-        (ngSubmit)="onSubmit()"
+        (ngSubmit)="onSubmit(formData)"
         class="flex flex-col gap-4">
         <div class="flex flex-col">
           <label class="">Project Name</label>
@@ -42,9 +43,9 @@
               [(ngModel)]="formData.status"
               class="block w-full mt-1 rounded-md bg-gray-100 border-transparent focus:border-gray-500 focus:bg-white focus:ring-0"
               name="status">
-              required
-              <option [ngValue]="true">true</option>
-              <option [ngValue]="false">false</option>
+              @for (status of projectStatuses; track status) {
+                <option [ngValue]="status">{{ status }}</option>
+              }
             </select>
           </div>
         }
@@ -70,7 +71,7 @@
         <div class="flex justify-end gap-2">
           <button
             type="button"
-            (click)="close.emit();"
+            (click)="closeModal.emit();"
             class="px-4 py-2 bg-gray-200 rounded cursor-pointer hover:bg-gray-100 transition-all">
             Cancel
           </button>

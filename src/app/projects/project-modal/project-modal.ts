@@ -5,6 +5,7 @@ import {ProjectStatus} from '../project-status';
 
 @Component({
   selector: 'app-project-modal',
+  standalone: true,
   imports: [
     FormsModule
   ],
@@ -18,6 +19,9 @@ export class ProjectModal {
   // Receive ModalOpen, false by default
   @Input() isModalOpen = false;
 
+  // Project statuses
+  projectStatuses = Object.values(ProjectStatus);
+
   // Existing project
   formData: Project = {
     id: 0,
@@ -27,12 +31,12 @@ export class ProjectModal {
     responsiblePerson: ''
   };
 
-
   // Emit events
-  @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<Project>();
+  @Output() closeModal = new EventEmitter<void>();
+  @Output() projectSubmit = new EventEmitter<Project>();
   @Output() delete = new EventEmitter<number>();
 
+  // On changes
   ngOnChanges() {
     if (this.project) {
       this.formData = {...this.project};
@@ -42,8 +46,8 @@ export class ProjectModal {
   }
 
   // Emit submit project
-  onSubmit() {
-    this.save.emit(this.formData);
+  onSubmit(project: Project) {
+    this.projectSubmit.emit(project);
   }
 
 }

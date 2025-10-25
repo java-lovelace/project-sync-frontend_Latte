@@ -7,7 +7,7 @@
 <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
   @for (project of projects(); track project.id) {
     <li>
-      <app-project-card [project]="project"/>
+      <app-project-card [project]="project" (editProject)="onEditProject($event)"/>
     </li>
   } @empty {
     @if (!loading()) {
@@ -15,3 +15,26 @@
     }
   }
 </ul>
+
+<app-project-modal
+  [isModalOpen]="showModal"
+  [project]="selectedProject()"
+  (closeModal)="closeModal()"
+  (projectSubmit)="onProjectFormSubmit($event)"
+  (delete)="onDeleteProject($event)"
+/>
+
+@if (showMessageModal) {
+  <div class="fixed inset-0 bg-black/60 flex items-center justify-center" (click)="closeMessage()">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md" (click)="$event.stopPropagation()">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">{{ modalType === 'success' ? 'Success' : 'Error' }}</h2>
+        <button (click)="closeMessage()" class="hover:bg-gray-200 transition-all rounded cursor-pointer p-2">×</button>
+      </div>
+      <p class="mb-4">{{ modalMessage }}</p>
+      <div class="flex justify-end">
+        <button (click)="closeMessage()" class="px-4 py-2 bg-gray-900 text-white rounded cursor-pointer hover:bg-gray-600 transition-all">OK</button>
+      </div>
+    </div>
+  </div>
+}
